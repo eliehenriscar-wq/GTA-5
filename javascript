@@ -20,10 +20,31 @@ function canSeeTarget(npc, target, viewDistance = 200, viewAngle = Math.PI / 3) 
   // 3. Kalkile diferans ant direksyon NPC ap gade a ak ang target la
   let angleDiff = angleToTarget - npc.angle;
 
-  // Normalize diferans lan ant -PI ak PI
+  // Normalize diferans lan ant -PI ak PI// Nan update loop ou a, pou chak polis/NPC
+police.forEach(cop => {
+  if (canSeeTarget(cop, player, 250, Math.PI / 3)) {
+    // Jwè a nan vizyon polis la!
+    cop.state = "chasing";
+    cop.lastKnownPlayerPos = { x: player.x, y: player.y };
+  }
+});
   while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
   while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
 
-  // 4. Si diferans lan pi piti pase mwatye vision cone a, li wè l
+  // 4. Si diferans lan pi piti pase mwatye vision cone a, li wè lfunction drawVisionCone(ctx, npc, viewDistance = 200, viewAngle = Math.PI / 3, color = "rgba(255,0,0,0.2)") {
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(npc.x, npc.y);
+  ctx.arc(
+    npc.x, npc.y,
+    viewDistance,
+    npc.angle - viewAngle / 2,
+    npc.angle + viewAngle / 2
+  );
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+}
   return Math.abs(angleDiff) <= viewAngle / 2;
 }
